@@ -13,8 +13,10 @@ var _ sdk.Msg = &MsgCreatePool{}
 
 func NewMsgCreatePool(creator string, title string, question string, answerRange string) *MsgCreatePool {
 	// TODO: NOOOOOOOO
-	number, _ := strconv.ParseUint(answerRange, 10, 64)
-
+	number, err := strconv.ParseUint(answerRange, 10, 64)
+	if err != nil {
+		number = 0
+	}
 	return &MsgCreatePool{
 		Creator:     creator,
 		Title:       title,
