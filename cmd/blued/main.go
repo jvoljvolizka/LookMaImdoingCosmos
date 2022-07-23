@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"blue/app"
+
 	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
 	"github.com/ignite/cli/ignite/pkg/cosmoscmd"
 )

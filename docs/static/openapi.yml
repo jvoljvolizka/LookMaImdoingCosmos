@@ -171,6 +171,57 @@ paths:
           type: boolean
       tags:
         - Query
+  '/blue/blue/showpool/{id}':
+    get:
+      summary: Queries a list of Showpool items.
+      operationId: BlueBlueShowpool
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              Pool:
+                type: object
+                properties:
+                  owner:
+                    type: string
+                  id:
+                    type: string
+                    format: uint64
+                  title:
+                    type: string
+                  question:
+                    type: string
+                  answerrange:
+                    type: string
+                    format: uint64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+          format: uint64
+      tags:
+        - Query
   /cosmos/auth/v1beta1/accounts:
     get:
       summary: Accounts returns all the existing accounts
@@ -30669,6 +30720,24 @@ definitions:
                    repeated Bar results = 1;
                    PageResponse page = 2;
            }
+  blue.blue.QueryShowpoolResponse:
+    type: object
+    properties:
+      Pool:
+        type: object
+        properties:
+          owner:
+            type: string
+          id:
+            type: string
+            format: uint64
+          title:
+            type: string
+          question:
+            type: string
+          answerrange:
+            type: string
+            format: uint64
   cosmos.base.query.v1beta1.PageRequest:
     type: object
     properties:

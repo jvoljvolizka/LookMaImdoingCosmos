@@ -54,6 +54,10 @@ export interface BlueQueryPoolsResponse {
   pagination?: V1Beta1PageResponse;
 }
 
+export interface BlueQueryShowpoolResponse {
+  Pool?: BluePool;
+}
+
 export interface ProtobufAny {
   "@type"?: string;
 }
@@ -362,6 +366,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       path: `/blue/blue/pools`,
       method: "GET",
       query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryShowpool
+   * @summary Queries a list of Showpool items.
+   * @request GET:/blue/blue/showpool/{id}
+   */
+  queryShowpool = (id: string, params: RequestParams = {}) =>
+    this.request<BlueQueryShowpoolResponse, RpcStatus>({
+      path: `/blue/blue/showpool/${id}`,
+      method: "GET",
       format: "json",
       ...params,
     });

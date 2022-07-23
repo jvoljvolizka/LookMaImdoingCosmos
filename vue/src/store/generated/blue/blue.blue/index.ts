@@ -44,6 +44,7 @@ const getDefaultState = () => {
 	return {
 				Params: {},
 				Pools: {},
+				Showpool: {},
 				
 				_Structure: {
 						Params: getStructure(Params.fromPartial({})),
@@ -87,6 +88,12 @@ export default {
 						(<any> params).query=null
 					}
 			return state.Pools[JSON.stringify(params)] ?? {}
+		},
+				getShowpool: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.Showpool[JSON.stringify(params)] ?? {}
 		},
 				
 		getTypeStructure: (state) => (type) => {
@@ -165,6 +172,28 @@ export default {
 				return getters['getPools']( { params: {...key}, query}) ?? {}
 			} catch (e) {
 				throw new Error('QueryClient:QueryPools API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
+		
+		
+		 		
+		
+		
+		async QueryShowpool({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const queryClient=await initQueryClient(rootGetters)
+				let value= (await queryClient.queryShowpool( key.id)).data
+				
+					
+				commit('QUERY', { query: 'Showpool', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryShowpool', payload: { options: { all }, params: {...key},query }})
+				return getters['getShowpool']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new Error('QueryClient:QueryShowpool API Node Unavailable. Could not perform query: ' + e.message)
 				
 			}
 		},

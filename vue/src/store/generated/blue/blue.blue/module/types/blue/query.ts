@@ -1,5 +1,6 @@
 /* eslint-disable */
-import { Reader, Writer } from "protobufjs/minimal";
+import { Reader, util, configure, Writer } from "protobufjs/minimal";
+import * as Long from "long";
 import { Params } from "../blue/params";
 import {
   PageRequest,
@@ -25,6 +26,14 @@ export interface QueryPoolsRequest {
 export interface QueryPoolsResponse {
   Pool: Pool[];
   pagination: PageResponse | undefined;
+}
+
+export interface QueryShowpoolRequest {
+  id: number;
+}
+
+export interface QueryShowpoolResponse {
+  Pool: Pool | undefined;
 }
 
 const baseQueryParamsRequest: object = {};
@@ -270,12 +279,133 @@ export const QueryPoolsResponse = {
   },
 };
 
+const baseQueryShowpoolRequest: object = { id: 0 };
+
+export const QueryShowpoolRequest = {
+  encode(
+    message: QueryShowpoolRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.id !== 0) {
+      writer.uint32(8).uint64(message.id);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryShowpoolRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryShowpoolRequest } as QueryShowpoolRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.id = longToNumber(reader.uint64() as Long);
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryShowpoolRequest {
+    const message = { ...baseQueryShowpoolRequest } as QueryShowpoolRequest;
+    if (object.id !== undefined && object.id !== null) {
+      message.id = Number(object.id);
+    } else {
+      message.id = 0;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryShowpoolRequest): unknown {
+    const obj: any = {};
+    message.id !== undefined && (obj.id = message.id);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<QueryShowpoolRequest>): QueryShowpoolRequest {
+    const message = { ...baseQueryShowpoolRequest } as QueryShowpoolRequest;
+    if (object.id !== undefined && object.id !== null) {
+      message.id = object.id;
+    } else {
+      message.id = 0;
+    }
+    return message;
+  },
+};
+
+const baseQueryShowpoolResponse: object = {};
+
+export const QueryShowpoolResponse = {
+  encode(
+    message: QueryShowpoolResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.Pool !== undefined) {
+      Pool.encode(message.Pool, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryShowpoolResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryShowpoolResponse } as QueryShowpoolResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.Pool = Pool.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryShowpoolResponse {
+    const message = { ...baseQueryShowpoolResponse } as QueryShowpoolResponse;
+    if (object.Pool !== undefined && object.Pool !== null) {
+      message.Pool = Pool.fromJSON(object.Pool);
+    } else {
+      message.Pool = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryShowpoolResponse): unknown {
+    const obj: any = {};
+    message.Pool !== undefined &&
+      (obj.Pool = message.Pool ? Pool.toJSON(message.Pool) : undefined);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryShowpoolResponse>
+  ): QueryShowpoolResponse {
+    const message = { ...baseQueryShowpoolResponse } as QueryShowpoolResponse;
+    if (object.Pool !== undefined && object.Pool !== null) {
+      message.Pool = Pool.fromPartial(object.Pool);
+    } else {
+      message.Pool = undefined;
+    }
+    return message;
+  },
+};
+
 /** Query defines the gRPC querier service. */
 export interface Query {
   /** Parameters queries the parameters of the module. */
   Params(request: QueryParamsRequest): Promise<QueryParamsResponse>;
   /** Queries a list of Pools items. */
   Pools(request: QueryPoolsRequest): Promise<QueryPoolsResponse>;
+  /** Queries a list of Showpool items. */
+  Showpool(request: QueryShowpoolRequest): Promise<QueryShowpoolResponse>;
 }
 
 export class QueryClientImpl implements Query {
@@ -294,6 +424,14 @@ export class QueryClientImpl implements Query {
     const promise = this.rpc.request("blue.blue.Query", "Pools", data);
     return promise.then((data) => QueryPoolsResponse.decode(new Reader(data)));
   }
+
+  Showpool(request: QueryShowpoolRequest): Promise<QueryShowpoolResponse> {
+    const data = QueryShowpoolRequest.encode(request).finish();
+    const promise = this.rpc.request("blue.blue.Query", "Showpool", data);
+    return promise.then((data) =>
+      QueryShowpoolResponse.decode(new Reader(data))
+    );
+  }
 }
 
 interface Rpc {
@@ -303,6 +441,16 @@ interface Rpc {
     data: Uint8Array
   ): Promise<Uint8Array>;
 }
+
+declare var self: any | undefined;
+declare var window: any | undefined;
+var globalThis: any = (() => {
+  if (typeof globalThis !== "undefined") return globalThis;
+  if (typeof self !== "undefined") return self;
+  if (typeof window !== "undefined") return window;
+  if (typeof global !== "undefined") return global;
+  throw "Unable to locate global object";
+})();
 
 type Builtin = Date | Function | Uint8Array | string | number | undefined;
 export type DeepPartial<T> = T extends Builtin
@@ -314,3 +462,15 @@ export type DeepPartial<T> = T extends Builtin
   : T extends {}
   ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
+
+function longToNumber(long: Long): number {
+  if (long.gt(Number.MAX_SAFE_INTEGER)) {
+    throw new globalThis.Error("Value is larger than Number.MAX_SAFE_INTEGER");
+  }
+  return long.toNumber();
+}
+
+if (util.Long !== Long) {
+  util.Long = Long as any;
+  configure();
+}

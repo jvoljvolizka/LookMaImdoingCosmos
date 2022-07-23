@@ -5,6 +5,7 @@ import (
 
 	testkeeper "blue/testutil/keeper"
 	"blue/x/blue/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 )
