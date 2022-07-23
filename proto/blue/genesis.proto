@@ -1,0 +1,14 @@
+syntax = "proto3";
+package blue.blue;
+
+import "gogoproto/gogo.proto";
+import "blue/params.proto";
+// this line is used by starport scaffolding # genesis/proto/import
+
+option go_package = "blue/x/blue/types";
+
+// GenesisState defines the blue module's genesis state.
+message GenesisState {
+  Params params = 1 [(gogoproto.nullable) = false];
+  // this line is used by starport scaffolding # genesis/proto/state
+}

@@ -1,0 +1,12 @@
+syntax = "proto3";
+package blue.blue;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "blue/x/blue/types";
+
+// Params defines the parameters for the module.
+message Params {
+  option (gogoproto.goproto_stringer) = false;
+  
+}
