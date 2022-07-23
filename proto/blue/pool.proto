@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package blue.blue;
+
+
+option go_package = "blue/x/blue/types";
+
+message Pool {
+  string owner = 1;
+  uint64 id = 2;
+  string title = 3; 
+  string question = 4; 
+  uint64 answerrange = 5;
+}
