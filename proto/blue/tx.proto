@@ -1,6 +1,6 @@
 syntax = "proto3";
 package blue.blue;
-
+import "blue/pool.proto";
 // this line is used by starport scaffolding # proto/tx/import
 
 option go_package = "blue/x/blue/types";
@@ -8,6 +8,7 @@ option go_package = "blue/x/blue/types";
 // Msg defines the Msg service.
 service Msg {
       rpc CreatePool(MsgCreatePool) returns (MsgCreatePoolResponse);
+  rpc Vote(MsgVote) returns (MsgVoteResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
 }
 
@@ -20,6 +21,16 @@ message MsgCreatePool {
 
 message MsgCreatePoolResponse {
   uint64 id = 1;
+}
+
+message MsgVote {
+  string creator = 1;
+  string poolId = 2;
+  string answer = 3;
+}
+
+message MsgVoteResponse {
+  Pool pool = 1;
 }
 
 // this line is used by starport scaffolding # proto/tx/message

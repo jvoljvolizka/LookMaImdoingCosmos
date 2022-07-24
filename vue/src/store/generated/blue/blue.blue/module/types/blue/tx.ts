@@ -1,6 +1,7 @@
 /* eslint-disable */
 import { Reader, util, configure, Writer } from "protobufjs/minimal";
 import * as Long from "long";
+import { Pool } from "../blue/pool";
 
 export const protobufPackage = "blue.blue";
 
@@ -13,6 +14,16 @@ export interface MsgCreatePool {
 
 export interface MsgCreatePoolResponse {
   id: number;
+}
+
+export interface MsgVote {
+  creator: string;
+  poolId: string;
+  answer: string;
+}
+
+export interface MsgVoteResponse {
+  pool: Pool | undefined;
 }
 
 const baseMsgCreatePool: object = {
@@ -187,10 +198,156 @@ export const MsgCreatePoolResponse = {
   },
 };
 
+const baseMsgVote: object = { creator: "", poolId: "", answer: "" };
+
+export const MsgVote = {
+  encode(message: MsgVote, writer: Writer = Writer.create()): Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.poolId !== "") {
+      writer.uint32(18).string(message.poolId);
+    }
+    if (message.answer !== "") {
+      writer.uint32(26).string(message.answer);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgVote {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgVote } as MsgVote;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.poolId = reader.string();
+          break;
+        case 3:
+          message.answer = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgVote {
+    const message = { ...baseMsgVote } as MsgVote;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = String(object.creator);
+    } else {
+      message.creator = "";
+    }
+    if (object.poolId !== undefined && object.poolId !== null) {
+      message.poolId = String(object.poolId);
+    } else {
+      message.poolId = "";
+    }
+    if (object.answer !== undefined && object.answer !== null) {
+      message.answer = String(object.answer);
+    } else {
+      message.answer = "";
+    }
+    return message;
+  },
+
+  toJSON(message: MsgVote): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.poolId !== undefined && (obj.poolId = message.poolId);
+    message.answer !== undefined && (obj.answer = message.answer);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<MsgVote>): MsgVote {
+    const message = { ...baseMsgVote } as MsgVote;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = object.creator;
+    } else {
+      message.creator = "";
+    }
+    if (object.poolId !== undefined && object.poolId !== null) {
+      message.poolId = object.poolId;
+    } else {
+      message.poolId = "";
+    }
+    if (object.answer !== undefined && object.answer !== null) {
+      message.answer = object.answer;
+    } else {
+      message.answer = "";
+    }
+    return message;
+  },
+};
+
+const baseMsgVoteResponse: object = {};
+
+export const MsgVoteResponse = {
+  encode(message: MsgVoteResponse, writer: Writer = Writer.create()): Writer {
+    if (message.pool !== undefined) {
+      Pool.encode(message.pool, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgVoteResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgVoteResponse } as MsgVoteResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.pool = Pool.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgVoteResponse {
+    const message = { ...baseMsgVoteResponse } as MsgVoteResponse;
+    if (object.pool !== undefined && object.pool !== null) {
+      message.pool = Pool.fromJSON(object.pool);
+    } else {
+      message.pool = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: MsgVoteResponse): unknown {
+    const obj: any = {};
+    message.pool !== undefined &&
+      (obj.pool = message.pool ? Pool.toJSON(message.pool) : undefined);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<MsgVoteResponse>): MsgVoteResponse {
+    const message = { ...baseMsgVoteResponse } as MsgVoteResponse;
+    if (object.pool !== undefined && object.pool !== null) {
+      message.pool = Pool.fromPartial(object.pool);
+    } else {
+      message.pool = undefined;
+    }
+    return message;
+  },
+};
+
 /** Msg defines the Msg service. */
 export interface Msg {
-  /** this line is used by starport scaffolding # proto/tx/rpc */
   CreatePool(request: MsgCreatePool): Promise<MsgCreatePoolResponse>;
+  /** this line is used by starport scaffolding # proto/tx/rpc */
+  Vote(request: MsgVote): Promise<MsgVoteResponse>;
 }
 
 export class MsgClientImpl implements Msg {
@@ -204,6 +361,12 @@ export class MsgClientImpl implements Msg {
     return promise.then((data) =>
       MsgCreatePoolResponse.decode(new Reader(data))
     );
+  }
+
+  Vote(request: MsgVote): Promise<MsgVoteResponse> {
+    const data = MsgVote.encode(request).finish();
+    const promise = this.rpc.request("blue.blue.Msg", "Vote", data);
+    return promise.then((data) => MsgVoteResponse.decode(new Reader(data)));
   }
 }
 

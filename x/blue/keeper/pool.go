@@ -45,3 +45,26 @@ func (k Keeper) AppendPool(ctx sdk.Context, pool types.Pool) uint64 {
 	k.SetPoolCount(ctx, count+1)
 	return count
 }
+
+func (k Keeper) GetPool(ctx sdk.Context, Id uint64) types.Pool {
+	var pool types.Pool
+	store := ctx.KVStore(k.storeKey)
+	poolStore := prefix.NewStore(store, []byte(types.PoolKey))
+
+	byteKey := make([]byte, 8)
+
+	binary.BigEndian.PutUint64(byteKey, Id)
+
+	bz := poolStore.Get(byteKey)
+	k.cdc.MustUnmarshal(bz, &pool)
+	return pool
+
+}
+
+func (k Keeper) EditPool(ctx sdk.Context, pool types.Pool) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), []byte(types.PoolKey))
+	byteKey := make([]byte, 8)
+	binary.BigEndian.PutUint64(byteKey, pool.Id)
+	appendedValue := k.cdc.MustMarshal(&pool)
+	store.Set(byteKey, appendedValue)
+}

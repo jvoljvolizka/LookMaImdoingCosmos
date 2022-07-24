@@ -30660,6 +30660,29 @@ definitions:
       id:
         type: string
         format: uint64
+  blue.blue.MsgVoteResponse:
+    type: object
+    properties:
+      pool:
+        type: object
+        properties:
+          owner:
+            type: string
+          id:
+            type: string
+            format: uint64
+          title:
+            type: string
+          question:
+            type: string
+          answerrange:
+            type: string
+            format: uint64
+          answers:
+            type: array
+            items:
+              type: string
+              format: uint64
   blue.blue.Params:
     type: object
     description: Params defines the parameters for the module.

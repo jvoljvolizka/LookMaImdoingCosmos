@@ -14,6 +14,10 @@ export interface BlueMsgCreatePoolResponse {
   id?: string;
 }
 
+export interface BlueMsgVoteResponse {
+  pool?: BluePool;
+}
+
 /**
  * Params defines the parameters for the module.
  */
