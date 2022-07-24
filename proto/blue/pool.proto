@@ -11,4 +11,5 @@ message Pool {
   string title = 3; 
   string question = 4; 
   uint64 answerrange = 5;
+  repeated uint64 answers = 6;
 }

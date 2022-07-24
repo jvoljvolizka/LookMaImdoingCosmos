@@ -10,6 +10,7 @@ export interface Pool {
   title: string;
   question: string;
   answerrange: number;
+  answers: number[];
 }
 
 const basePool: object = {
@@ -18,6 +19,7 @@ const basePool: object = {
   title: "",
   question: "",
   answerrange: 0,
+  answers: 0,
 };
 
 export const Pool = {
@@ -37,6 +39,11 @@ export const Pool = {
     if (message.answerrange !== 0) {
       writer.uint32(40).uint64(message.answerrange);
     }
+    writer.uint32(50).fork();
+    for (const v of message.answers) {
+      writer.uint64(v);
+    }
+    writer.ldelim();
     return writer;
   },
 
@@ -44,6 +51,7 @@ export const Pool = {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...basePool } as Pool;
+    message.answers = [];
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -62,6 +70,16 @@ export const Pool = {
         case 5:
           message.answerrange = longToNumber(reader.uint64() as Long);
           break;
+        case 6:
+          if ((tag & 7) === 2) {
+            const end2 = reader.uint32() + reader.pos;
+            while (reader.pos < end2) {
+              message.answers.push(longToNumber(reader.uint64() as Long));
+            }
+          } else {
+            message.answers.push(longToNumber(reader.uint64() as Long));
+          }
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -72,6 +90,7 @@ export const Pool = {
 
   fromJSON(object: any): Pool {
     const message = { ...basePool } as Pool;
+    message.answers = [];
     if (object.owner !== undefined && object.owner !== null) {
       message.owner = String(object.owner);
     } else {
@@ -97,6 +116,11 @@ export const Pool = {
     } else {
       message.answerrange = 0;
     }
+    if (object.answers !== undefined && object.answers !== null) {
+      for (const e of object.answers) {
+        message.answers.push(Number(e));
+      }
+    }
     return message;
   },
 
@@ -108,11 +132,17 @@ export const Pool = {
     message.question !== undefined && (obj.question = message.question);
     message.answerrange !== undefined &&
       (obj.answerrange = message.answerrange);
+    if (message.answers) {
+      obj.answers = message.answers.map((e) => e);
+    } else {
+      obj.answers = [];
+    }
     return obj;
   },
 
   fromPartial(object: DeepPartial<Pool>): Pool {
     const message = { ...basePool } as Pool;
+    message.answers = [];
     if (object.owner !== undefined && object.owner !== null) {
       message.owner = object.owner;
     } else {
@@ -137,6 +167,11 @@ export const Pool = {
       message.answerrange = object.answerrange;
     } else {
       message.answerrange = 0;
+    }
+    if (object.answers !== undefined && object.answers !== null) {
+      for (const e of object.answers) {
+        message.answers.push(e);
+      }
     }
     return message;
   },

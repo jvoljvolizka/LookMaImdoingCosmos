@@ -67,6 +67,11 @@ paths:
                     answerrange:
                       type: string
                       format: uint64
+                    answers:
+                      type: array
+                      items:
+                        type: string
+                        format: uint64
               pagination:
                 type: object
                 properties:
@@ -196,6 +201,11 @@ paths:
                   answerrange:
                     type: string
                     format: uint64
+                  answers:
+                    type: array
+                    items:
+                      type: string
+                      format: uint64
         default:
           description: An unexpected error response.
           schema:
@@ -30668,6 +30678,11 @@ definitions:
       answerrange:
         type: string
         format: uint64
+      answers:
+        type: array
+        items:
+          type: string
+          format: uint64
   blue.blue.QueryParamsResponse:
     type: object
     properties:
@@ -30695,6 +30710,11 @@ definitions:
             answerrange:
               type: string
               format: uint64
+            answers:
+              type: array
+              items:
+                type: string
+                format: uint64
       pagination:
         type: object
         properties:
@@ -30738,6 +30758,11 @@ definitions:
           answerrange:
             type: string
             format: uint64
+          answers:
+            type: array
+            items:
+              type: string
+              format: uint64
   cosmos.base.query.v1beta1.PageRequest:
     type: object
     properties:

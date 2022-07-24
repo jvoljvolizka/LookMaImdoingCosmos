@@ -29,6 +29,7 @@ export interface BluePool {
 
   /** @format uint64 */
   answerrange?: string;
+  answers?: string[];
 }
 
 /**
