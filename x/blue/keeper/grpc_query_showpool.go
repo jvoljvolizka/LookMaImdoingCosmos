@@ -15,7 +15,6 @@ func (k Keeper) Showpool(goCtx context.Context, req *types.QueryShowpoolRequest)
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
 
-
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	pool := k.GetPool(ctx, req.Id)
 

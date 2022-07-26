@@ -36,6 +36,33 @@ export interface BluePool {
   answers?: string[];
 }
 
+export interface BluePrefPool {
+  /** @format uint64 */
+  id?: string;
+  creator?: string;
+  title?: string;
+  questions?: BlueQuestion[];
+}
+
+export interface BlueQueryAllPrefPoolResponse {
+  PrefPool?: BluePrefPool[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
+}
+
+export interface BlueQueryGetPrefPoolResponse {
+  PrefPool?: BluePrefPool;
+}
+
 /**
  * QueryParamsResponse is response type for the Query/Params RPC method.
  */
@@ -61,6 +88,20 @@ export interface BlueQueryPoolsResponse {
 
 export interface BlueQueryShowpoolResponse {
   Pool?: BluePool;
+}
+
+export interface BlueQuestion {
+  /** @format uint64 */
+  id?: string;
+  options?: string[];
+  votes?: BlueVote[];
+}
+
+export interface BlueVote {
+  /** @format uint64 */
+  id?: string;
+  creator?: string;
+  votes?: string[];
 }
 
 export interface ProtobufAny {
@@ -371,6 +412,48 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       path: `/blue/blue/pools`,
       method: "GET",
       query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryPrefPoolAll
+   * @summary Queries a list of PrefPool items.
+   * @request GET:/blue/blue/pref_pool
+   */
+  queryPrefPoolAll = (
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.count_total"?: boolean;
+      "pagination.reverse"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<BlueQueryAllPrefPoolResponse, RpcStatus>({
+      path: `/blue/blue/pref_pool`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryPrefPool
+   * @summary Queries a PrefPool by id.
+   * @request GET:/blue/blue/pref_pool/{id}
+   */
+  queryPrefPool = (id: string, params: RequestParams = {}) =>
+    this.request<BlueQueryGetPrefPoolResponse, RpcStatus>({
+      path: `/blue/blue/pref_pool/${id}`,
+      method: "GET",
       format: "json",
       ...params,
     });

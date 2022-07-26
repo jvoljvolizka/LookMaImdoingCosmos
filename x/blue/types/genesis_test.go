@@ -19,12 +19,47 @@ func TestGenesisState_Validate(t *testing.T) {
 			valid:    true,
 		},
 		{
-			desc:     "valid genesis state",
+			desc: "valid genesis state",
 			genState: &types.GenesisState{
 
+				PrefPoolList: []types.PrefPool{
+					{
+						Id: 0,
+					},
+					{
+						Id: 1,
+					},
+				},
+				PrefPoolCount: 2,
 				// this line is used by starport scaffolding # types/genesis/validField
 			},
 			valid: true,
+		},
+		{
+			desc: "duplicated prefPool",
+			genState: &types.GenesisState{
+				PrefPoolList: []types.PrefPool{
+					{
+						Id: 0,
+					},
+					{
+						Id: 0,
+					},
+				},
+			},
+			valid: false,
+		},
+		{
+			desc: "invalid prefPool count",
+			genState: &types.GenesisState{
+				PrefPoolList: []types.PrefPool{
+					{
+						Id: 1,
+					},
+				},
+				PrefPoolCount: 0,
+			},
+			valid: false,
 		},
 		// this line is used by starport scaffolding # types/genesis/testcase
 	} {

@@ -6,6 +6,7 @@ import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "blue/params.proto";
 import "blue/pool.proto";
+import "blue/pref_pool.proto";
 // this line is used by starport scaffolding # 1
 
 option go_package = "blue/x/blue/types";
@@ -25,6 +26,16 @@ service Query {
 // Queries a list of Showpool items.
 	rpc Showpool(QueryShowpoolRequest) returns (QueryShowpoolResponse) {
 		option (google.api.http).get = "/blue/blue/showpool/{id}";
+	}
+
+// Queries a PrefPool by id.
+	rpc PrefPool(QueryGetPrefPoolRequest) returns (QueryGetPrefPoolResponse) {
+		option (google.api.http).get = "/blue/blue/pref_pool/{id}";
+	}
+
+	// Queries a list of PrefPool items.
+	rpc PrefPoolAll(QueryAllPrefPoolRequest) returns (QueryAllPrefPoolResponse) {
+		option (google.api.http).get = "/blue/blue/pref_pool";
 	}
 
 // this line is used by starport scaffolding # 2
@@ -54,6 +65,23 @@ message QueryShowpoolRequest {
 
 message QueryShowpoolResponse {
   Pool Pool = 1;
+}
+
+message QueryGetPrefPoolRequest {
+	uint64 id = 1;
+}
+
+message QueryGetPrefPoolResponse {
+	PrefPool PrefPool = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllPrefPoolRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllPrefPoolResponse {
+	repeated PrefPool PrefPool = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
 // this line is used by starport scaffolding # 3

@@ -1,0 +1,30 @@
+syntax = "proto3";
+package blue.blue;
+
+option go_package = "blue/x/blue/types";
+
+message Vote {
+  uint64 id = 1; 
+  string creator = 2; 
+  repeated string votes = 3; 
+  
+}
+
+message Question {
+  uint64 id = 1; 
+  repeated string options = 2; 
+  repeated Vote votes = 3; 
+  
+}
+
+message PrefPool {
+  uint64 id = 1;
+  string creator = 2; 
+  string title = 3; 
+  repeated Question questions = 4; 
+  
+}
+
+
+
+

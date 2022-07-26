@@ -2,9 +2,12 @@ import { txClient, queryClient, MissingWalletError , registry} from './module'
 
 import { Params } from "./module/types/blue/params"
 import { Pool } from "./module/types/blue/pool"
+import { Vote } from "./module/types/blue/pref_pool"
+import { Question } from "./module/types/blue/pref_pool"
+import { PrefPool } from "./module/types/blue/pref_pool"
 
 
-export { Params, Pool };
+export { Params, Pool, Vote, Question, PrefPool };
 
 async function initTxClient(vuexGetters) {
 	return await txClient(vuexGetters['common/wallet/signer'], {
@@ -45,10 +48,15 @@ const getDefaultState = () => {
 				Params: {},
 				Pools: {},
 				Showpool: {},
+				PrefPool: {},
+				PrefPoolAll: {},
 				
 				_Structure: {
 						Params: getStructure(Params.fromPartial({})),
 						Pool: getStructure(Pool.fromPartial({})),
+						Vote: getStructure(Vote.fromPartial({})),
+						Question: getStructure(Question.fromPartial({})),
+						PrefPool: getStructure(PrefPool.fromPartial({})),
 						
 		},
 		_Registry: registry,
@@ -94,6 +102,18 @@ export default {
 						(<any> params).query=null
 					}
 			return state.Showpool[JSON.stringify(params)] ?? {}
+		},
+				getPrefPool: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.PrefPool[JSON.stringify(params)] ?? {}
+		},
+				getPrefPoolAll: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.PrefPoolAll[JSON.stringify(params)] ?? {}
 		},
 				
 		getTypeStructure: (state) => (type) => {
@@ -194,6 +214,54 @@ export default {
 				return getters['getShowpool']( { params: {...key}, query}) ?? {}
 			} catch (e) {
 				throw new Error('QueryClient:QueryShowpool API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
+		
+		
+		 		
+		
+		
+		async QueryPrefPool({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const queryClient=await initQueryClient(rootGetters)
+				let value= (await queryClient.queryPrefPool( key.id)).data
+				
+					
+				commit('QUERY', { query: 'PrefPool', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryPrefPool', payload: { options: { all }, params: {...key},query }})
+				return getters['getPrefPool']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new Error('QueryClient:QueryPrefPool API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
+		
+		
+		 		
+		
+		
+		async QueryPrefPoolAll({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const queryClient=await initQueryClient(rootGetters)
+				let value= (await queryClient.queryPrefPoolAll(query)).data
+				
+					
+				while (all && (<any> value).pagination && (<any> value).pagination.next_key!=null) {
+					let next_values=(await queryClient.queryPrefPoolAll({...query, 'pagination.key':(<any> value).pagination.next_key})).data
+					value = mergeResults(value, next_values);
+				}
+				commit('QUERY', { query: 'PrefPoolAll', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryPrefPoolAll', payload: { options: { all }, params: {...key},query }})
+				return getters['getPrefPoolAll']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new Error('QueryClient:QueryPrefPoolAll API Node Unavailable. Could not perform query: ' + e.message)
 				
 			}
 		},
