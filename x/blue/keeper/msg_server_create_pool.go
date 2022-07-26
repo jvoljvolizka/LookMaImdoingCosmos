@@ -18,8 +18,6 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 		Answerrange: msg.AnswerRange,
 	}
 	id := k.AppendPool(ctx, NewPool)
-	// TODO: Handling the message
-	_ = ctx
 
 	return &types.MsgCreatePoolResponse{Id: id}, nil
 }

@@ -32,6 +32,10 @@ const (
 	// TODO: Determine the simulation weight value
 	defaultWeightMsgVote int = 100
 
+	opWeightMsgCreatePrefPool = "op_weight_msg_create_pref_pool"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgCreatePrefPool int = 100
+
 	// this line is used by starport scaffolding # simapp/module/const
 )
 
@@ -86,6 +90,17 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 	operations = append(operations, simulation.NewWeightedOperation(
 		weightMsgVote,
 		bluesimulation.SimulateMsgVote(am.accountKeeper, am.bankKeeper, am.keeper),
+	))
+
+	var weightMsgCreatePrefPool int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgCreatePrefPool, &weightMsgCreatePrefPool, nil,
+		func(_ *rand.Rand) {
+			weightMsgCreatePrefPool = defaultWeightMsgCreatePrefPool
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgCreatePrefPool,
+		bluesimulation.SimulateMsgCreatePrefPool(am.accountKeeper, am.bankKeeper, am.keeper),
 	))
 
 	// this line is used by starport scaffolding # simapp/module/operation

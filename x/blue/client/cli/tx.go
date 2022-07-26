@@ -32,7 +32,8 @@ func GetTxCmd() *cobra.Command {
 
 	cmd.AddCommand(CmdCreatePool())
 	cmd.AddCommand(CmdVote())
-	// this line is used by starport scaffolding # 1
+	cmd.AddCommand(CmdCreatePrefPool())
+// this line is used by starport scaffolding # 1
 
 	return cmd
 }

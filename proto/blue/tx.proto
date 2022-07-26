@@ -9,6 +9,7 @@ option go_package = "blue/x/blue/types";
 service Msg {
       rpc CreatePool(MsgCreatePool) returns (MsgCreatePoolResponse);
   rpc Vote(MsgVote) returns (MsgVoteResponse);
+  rpc CreatePrefPool(MsgCreatePrefPool) returns (MsgCreatePrefPoolResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
 }
 
@@ -31,6 +32,15 @@ message MsgVote {
 
 message MsgVoteResponse {
   Pool pool = 1;
+}
+
+message MsgCreatePrefPool {
+  string creator = 1;
+  string title = 2;
+}
+
+message MsgCreatePrefPoolResponse {
+  uint64 id = 1;
 }
 
 // this line is used by starport scaffolding # proto/tx/message

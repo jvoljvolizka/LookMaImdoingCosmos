@@ -206,6 +206,8 @@ paths:
                           id:
                             type: string
                             format: uint64
+                          body:
+                            type: string
                           options:
                             type: array
                             items:
@@ -356,6 +358,8 @@ paths:
                         id:
                           type: string
                           format: uint64
+                        body:
+                          type: string
                         options:
                           type: array
                           items:
@@ -30884,6 +30888,12 @@ definitions:
       id:
         type: string
         format: uint64
+  blue.blue.MsgCreatePrefPoolResponse:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uint64
   blue.blue.MsgVoteResponse:
     type: object
     properties:
@@ -30948,6 +30958,8 @@ definitions:
             id:
               type: string
               format: uint64
+            body:
+              type: string
             options:
               type: array
               items:
@@ -30989,6 +31001,8 @@ definitions:
                   id:
                     type: string
                     format: uint64
+                  body:
+                    type: string
                   options:
                     type: array
                     items:
@@ -31053,6 +31067,8 @@ definitions:
                 id:
                   type: string
                   format: uint64
+                body:
+                  type: string
                 options:
                   type: array
                   items:
@@ -31157,6 +31173,8 @@ definitions:
       id:
         type: string
         format: uint64
+      body:
+        type: string
       options:
         type: array
         items:

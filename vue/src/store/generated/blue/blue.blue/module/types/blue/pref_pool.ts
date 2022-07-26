@@ -12,6 +12,7 @@ export interface Vote {
 
 export interface Question {
   id: number;
+  body: string;
   options: string[];
   votes: Vote[];
 }
@@ -119,18 +120,21 @@ export const Vote = {
   },
 };
 
-const baseQuestion: object = { id: 0, options: "" };
+const baseQuestion: object = { id: 0, body: "", options: "" };
 
 export const Question = {
   encode(message: Question, writer: Writer = Writer.create()): Writer {
     if (message.id !== 0) {
       writer.uint32(8).uint64(message.id);
     }
+    if (message.body !== "") {
+      writer.uint32(18).string(message.body);
+    }
     for (const v of message.options) {
-      writer.uint32(18).string(v!);
+      writer.uint32(26).string(v!);
     }
     for (const v of message.votes) {
-      Vote.encode(v!, writer.uint32(26).fork()).ldelim();
+      Vote.encode(v!, writer.uint32(34).fork()).ldelim();
     }
     return writer;
   },
@@ -148,9 +152,12 @@ export const Question = {
           message.id = longToNumber(reader.uint64() as Long);
           break;
         case 2:
-          message.options.push(reader.string());
+          message.body = reader.string();
           break;
         case 3:
+          message.options.push(reader.string());
+          break;
+        case 4:
           message.votes.push(Vote.decode(reader, reader.uint32()));
           break;
         default:
@@ -170,6 +177,11 @@ export const Question = {
     } else {
       message.id = 0;
     }
+    if (object.body !== undefined && object.body !== null) {
+      message.body = String(object.body);
+    } else {
+      message.body = "";
+    }
     if (object.options !== undefined && object.options !== null) {
       for (const e of object.options) {
         message.options.push(String(e));
@@ -186,6 +198,7 @@ export const Question = {
   toJSON(message: Question): unknown {
     const obj: any = {};
     message.id !== undefined && (obj.id = message.id);
+    message.body !== undefined && (obj.body = message.body);
     if (message.options) {
       obj.options = message.options.map((e) => e);
     } else {
@@ -207,6 +220,11 @@ export const Question = {
       message.id = object.id;
     } else {
       message.id = 0;
+    }
+    if (object.body !== undefined && object.body !== null) {
+      message.body = object.body;
+    } else {
+      message.body = "";
     }
     if (object.options !== undefined && object.options !== null) {
       for (const e of object.options) {

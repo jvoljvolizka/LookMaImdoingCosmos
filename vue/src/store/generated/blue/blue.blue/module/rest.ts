@@ -14,6 +14,11 @@ export interface BlueMsgCreatePoolResponse {
   id?: string;
 }
 
+export interface BlueMsgCreatePrefPoolResponse {
+  /** @format uint64 */
+  id?: string;
+}
+
 export interface BlueMsgVoteResponse {
   pool?: BluePool;
 }
@@ -93,6 +98,7 @@ export interface BlueQueryShowpoolResponse {
 export interface BlueQuestion {
   /** @format uint64 */
   id?: string;
+  body?: string;
   options?: string[];
   votes?: BlueVote[];
 }

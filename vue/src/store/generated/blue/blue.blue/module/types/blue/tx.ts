@@ -26,6 +26,15 @@ export interface MsgVoteResponse {
   pool: Pool | undefined;
 }
 
+export interface MsgCreatePrefPool {
+  creator: string;
+  title: string;
+}
+
+export interface MsgCreatePrefPoolResponse {
+  id: number;
+}
+
 const baseMsgCreatePool: object = {
   creator: "",
   title: "",
@@ -343,11 +352,155 @@ export const MsgVoteResponse = {
   },
 };
 
+const baseMsgCreatePrefPool: object = { creator: "", title: "" };
+
+export const MsgCreatePrefPool = {
+  encode(message: MsgCreatePrefPool, writer: Writer = Writer.create()): Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.title !== "") {
+      writer.uint32(18).string(message.title);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgCreatePrefPool {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgCreatePrefPool } as MsgCreatePrefPool;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.title = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgCreatePrefPool {
+    const message = { ...baseMsgCreatePrefPool } as MsgCreatePrefPool;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = String(object.creator);
+    } else {
+      message.creator = "";
+    }
+    if (object.title !== undefined && object.title !== null) {
+      message.title = String(object.title);
+    } else {
+      message.title = "";
+    }
+    return message;
+  },
+
+  toJSON(message: MsgCreatePrefPool): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.title !== undefined && (obj.title = message.title);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<MsgCreatePrefPool>): MsgCreatePrefPool {
+    const message = { ...baseMsgCreatePrefPool } as MsgCreatePrefPool;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = object.creator;
+    } else {
+      message.creator = "";
+    }
+    if (object.title !== undefined && object.title !== null) {
+      message.title = object.title;
+    } else {
+      message.title = "";
+    }
+    return message;
+  },
+};
+
+const baseMsgCreatePrefPoolResponse: object = { id: 0 };
+
+export const MsgCreatePrefPoolResponse = {
+  encode(
+    message: MsgCreatePrefPoolResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.id !== 0) {
+      writer.uint32(8).uint64(message.id);
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): MsgCreatePrefPoolResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseMsgCreatePrefPoolResponse,
+    } as MsgCreatePrefPoolResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.id = longToNumber(reader.uint64() as Long);
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgCreatePrefPoolResponse {
+    const message = {
+      ...baseMsgCreatePrefPoolResponse,
+    } as MsgCreatePrefPoolResponse;
+    if (object.id !== undefined && object.id !== null) {
+      message.id = Number(object.id);
+    } else {
+      message.id = 0;
+    }
+    return message;
+  },
+
+  toJSON(message: MsgCreatePrefPoolResponse): unknown {
+    const obj: any = {};
+    message.id !== undefined && (obj.id = message.id);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<MsgCreatePrefPoolResponse>
+  ): MsgCreatePrefPoolResponse {
+    const message = {
+      ...baseMsgCreatePrefPoolResponse,
+    } as MsgCreatePrefPoolResponse;
+    if (object.id !== undefined && object.id !== null) {
+      message.id = object.id;
+    } else {
+      message.id = 0;
+    }
+    return message;
+  },
+};
+
 /** Msg defines the Msg service. */
 export interface Msg {
   CreatePool(request: MsgCreatePool): Promise<MsgCreatePoolResponse>;
-  /** this line is used by starport scaffolding # proto/tx/rpc */
   Vote(request: MsgVote): Promise<MsgVoteResponse>;
+  /** this line is used by starport scaffolding # proto/tx/rpc */
+  CreatePrefPool(
+    request: MsgCreatePrefPool
+  ): Promise<MsgCreatePrefPoolResponse>;
 }
 
 export class MsgClientImpl implements Msg {
@@ -367,6 +520,16 @@ export class MsgClientImpl implements Msg {
     const data = MsgVote.encode(request).finish();
     const promise = this.rpc.request("blue.blue.Msg", "Vote", data);
     return promise.then((data) => MsgVoteResponse.decode(new Reader(data)));
+  }
+
+  CreatePrefPool(
+    request: MsgCreatePrefPool
+  ): Promise<MsgCreatePrefPoolResponse> {
+    const data = MsgCreatePrefPool.encode(request).finish();
+    const promise = this.rpc.request("blue.blue.Msg", "CreatePrefPool", data);
+    return promise.then((data) =>
+      MsgCreatePrefPoolResponse.decode(new Reader(data))
+    );
   }
 }
 

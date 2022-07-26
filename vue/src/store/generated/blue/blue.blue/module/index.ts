@@ -5,11 +5,13 @@ import { SigningStargateClient } from "@cosmjs/stargate";
 import { Registry, OfflineSigner, EncodeObject, DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import { Api } from "./rest";
 import { MsgVote } from "./types/blue/tx";
+import { MsgCreatePrefPool } from "./types/blue/tx";
 import { MsgCreatePool } from "./types/blue/tx";
 
 
 const types = [
   ["/blue.blue.MsgVote", MsgVote],
+  ["/blue.blue.MsgCreatePrefPool", MsgCreatePrefPool],
   ["/blue.blue.MsgCreatePool", MsgCreatePool],
   
 ];
@@ -44,6 +46,7 @@ const txClient = async (wallet: OfflineSigner, { addr: addr }: TxClientOptions =
   return {
     signAndBroadcast: (msgs: EncodeObject[], { fee, memo }: SignAndBroadcastOptions = {fee: defaultFee, memo: ""}) => client.signAndBroadcast(address, msgs, fee,memo),
     msgVote: (data: MsgVote): EncodeObject => ({ typeUrl: "/blue.blue.MsgVote", value: MsgVote.fromPartial( data ) }),
+    msgCreatePrefPool: (data: MsgCreatePrefPool): EncodeObject => ({ typeUrl: "/blue.blue.MsgCreatePrefPool", value: MsgCreatePrefPool.fromPartial( data ) }),
     msgCreatePool: (data: MsgCreatePool): EncodeObject => ({ typeUrl: "/blue.blue.MsgCreatePool", value: MsgCreatePool.fromPartial( data ) }),
     
   };
