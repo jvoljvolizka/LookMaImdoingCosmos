@@ -9,6 +9,11 @@
  * ---------------------------------------------------------------
  */
 
+export interface BlueMsgAddQuestionResponse {
+  /** @format uint64 */
+  id?: string;
+}
+
 export interface BlueMsgCreatePoolResponse {
   /** @format uint64 */
   id?: string;

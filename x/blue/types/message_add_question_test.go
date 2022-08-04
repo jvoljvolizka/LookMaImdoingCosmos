@@ -8,21 +8,21 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestMsgCreatePrefPool_ValidateBasic(t *testing.T) {
+func TestMsgAddQuestion_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name string
-		msg  MsgCreatePrefPool
+		msg  MsgAddQuestion
 		err  error
 	}{
 		{
 			name: "invalid address",
-			msg: MsgCreatePrefPool{
+			msg: MsgAddQuestion{
 				Creator: "invalid_address",
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
 			name: "valid address",
-			msg: MsgCreatePrefPool{
+			msg: MsgAddQuestion{
 				Creator: sample.AccAddress(),
 			},
 		},

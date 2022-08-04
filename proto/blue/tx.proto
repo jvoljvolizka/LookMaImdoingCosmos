@@ -10,6 +10,7 @@ service Msg {
       rpc CreatePool(MsgCreatePool) returns (MsgCreatePoolResponse);
   rpc Vote(MsgVote) returns (MsgVoteResponse);
   rpc CreatePrefPool(MsgCreatePrefPool) returns (MsgCreatePrefPoolResponse);
+  rpc AddQuestion(MsgAddQuestion) returns (MsgAddQuestionResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
 }
 
@@ -40,6 +41,17 @@ message MsgCreatePrefPool {
 }
 
 message MsgCreatePrefPoolResponse {
+  uint64 id = 1;
+}
+
+message MsgAddQuestion {
+  string creator = 1;
+  uint64 poolId = 2;
+  string body = 3;
+  repeated string options = 4;
+}
+
+message MsgAddQuestionResponse {
   uint64 id = 1;
 }
 

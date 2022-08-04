@@ -35,6 +35,17 @@ export interface MsgCreatePrefPoolResponse {
   id: number;
 }
 
+export interface MsgAddQuestion {
+  creator: string;
+  poolId: number;
+  body: string;
+  options: string[];
+}
+
+export interface MsgAddQuestionResponse {
+  id: number;
+}
+
 const baseMsgCreatePool: object = {
   creator: "",
   title: "",
@@ -493,14 +504,193 @@ export const MsgCreatePrefPoolResponse = {
   },
 };
 
+const baseMsgAddQuestion: object = {
+  creator: "",
+  poolId: 0,
+  body: "",
+  options: "",
+};
+
+export const MsgAddQuestion = {
+  encode(message: MsgAddQuestion, writer: Writer = Writer.create()): Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.poolId !== 0) {
+      writer.uint32(16).uint64(message.poolId);
+    }
+    if (message.body !== "") {
+      writer.uint32(26).string(message.body);
+    }
+    for (const v of message.options) {
+      writer.uint32(34).string(v!);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgAddQuestion {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgAddQuestion } as MsgAddQuestion;
+    message.options = [];
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.poolId = longToNumber(reader.uint64() as Long);
+          break;
+        case 3:
+          message.body = reader.string();
+          break;
+        case 4:
+          message.options.push(reader.string());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgAddQuestion {
+    const message = { ...baseMsgAddQuestion } as MsgAddQuestion;
+    message.options = [];
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = String(object.creator);
+    } else {
+      message.creator = "";
+    }
+    if (object.poolId !== undefined && object.poolId !== null) {
+      message.poolId = Number(object.poolId);
+    } else {
+      message.poolId = 0;
+    }
+    if (object.body !== undefined && object.body !== null) {
+      message.body = String(object.body);
+    } else {
+      message.body = "";
+    }
+    if (object.options !== undefined && object.options !== null) {
+      for (const e of object.options) {
+        message.options.push(String(e));
+      }
+    }
+    return message;
+  },
+
+  toJSON(message: MsgAddQuestion): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.poolId !== undefined && (obj.poolId = message.poolId);
+    message.body !== undefined && (obj.body = message.body);
+    if (message.options) {
+      obj.options = message.options.map((e) => e);
+    } else {
+      obj.options = [];
+    }
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<MsgAddQuestion>): MsgAddQuestion {
+    const message = { ...baseMsgAddQuestion } as MsgAddQuestion;
+    message.options = [];
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = object.creator;
+    } else {
+      message.creator = "";
+    }
+    if (object.poolId !== undefined && object.poolId !== null) {
+      message.poolId = object.poolId;
+    } else {
+      message.poolId = 0;
+    }
+    if (object.body !== undefined && object.body !== null) {
+      message.body = object.body;
+    } else {
+      message.body = "";
+    }
+    if (object.options !== undefined && object.options !== null) {
+      for (const e of object.options) {
+        message.options.push(e);
+      }
+    }
+    return message;
+  },
+};
+
+const baseMsgAddQuestionResponse: object = { id: 0 };
+
+export const MsgAddQuestionResponse = {
+  encode(
+    message: MsgAddQuestionResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.id !== 0) {
+      writer.uint32(8).uint64(message.id);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgAddQuestionResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgAddQuestionResponse } as MsgAddQuestionResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.id = longToNumber(reader.uint64() as Long);
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgAddQuestionResponse {
+    const message = { ...baseMsgAddQuestionResponse } as MsgAddQuestionResponse;
+    if (object.id !== undefined && object.id !== null) {
+      message.id = Number(object.id);
+    } else {
+      message.id = 0;
+    }
+    return message;
+  },
+
+  toJSON(message: MsgAddQuestionResponse): unknown {
+    const obj: any = {};
+    message.id !== undefined && (obj.id = message.id);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<MsgAddQuestionResponse>
+  ): MsgAddQuestionResponse {
+    const message = { ...baseMsgAddQuestionResponse } as MsgAddQuestionResponse;
+    if (object.id !== undefined && object.id !== null) {
+      message.id = object.id;
+    } else {
+      message.id = 0;
+    }
+    return message;
+  },
+};
+
 /** Msg defines the Msg service. */
 export interface Msg {
   CreatePool(request: MsgCreatePool): Promise<MsgCreatePoolResponse>;
   Vote(request: MsgVote): Promise<MsgVoteResponse>;
-  /** this line is used by starport scaffolding # proto/tx/rpc */
   CreatePrefPool(
     request: MsgCreatePrefPool
   ): Promise<MsgCreatePrefPoolResponse>;
+  /** this line is used by starport scaffolding # proto/tx/rpc */
+  AddQuestion(request: MsgAddQuestion): Promise<MsgAddQuestionResponse>;
 }
 
 export class MsgClientImpl implements Msg {
@@ -529,6 +719,14 @@ export class MsgClientImpl implements Msg {
     const promise = this.rpc.request("blue.blue.Msg", "CreatePrefPool", data);
     return promise.then((data) =>
       MsgCreatePrefPoolResponse.decode(new Reader(data))
+    );
+  }
+
+  AddQuestion(request: MsgAddQuestion): Promise<MsgAddQuestionResponse> {
+    const data = MsgAddQuestion.encode(request).finish();
+    const promise = this.rpc.request("blue.blue.Msg", "AddQuestion", data);
+    return promise.then((data) =>
+      MsgAddQuestionResponse.decode(new Reader(data))
     );
   }
 }

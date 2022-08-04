@@ -30882,6 +30882,12 @@ paths:
       tags:
         - Query
 definitions:
+  blue.blue.MsgAddQuestionResponse:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uint64
   blue.blue.MsgCreatePoolResponse:
     type: object
     properties:

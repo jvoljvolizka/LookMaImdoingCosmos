@@ -5,26 +5,26 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
-const TypeMsgCreatePrefPool = "create_pref_pool"
+const TypeMsgAddQuestion = "add_question"
 
-var _ sdk.Msg = &MsgCreatePrefPool{}
+var _ sdk.Msg = &MsgAddQuestion{}
 
-func NewMsgCreatePrefPool(creator string, title string) *MsgCreatePrefPool {
-	return &MsgCreatePrefPool{
+func NewMsgAddQuestion(creator string, body string) *MsgAddQuestion {
+	return &MsgAddQuestion{
 		Creator: creator,
-		Title:   title,
+		Body:    body,
 	}
 }
 
-func (msg *MsgCreatePrefPool) Route() string {
+func (msg *MsgAddQuestion) Route() string {
 	return RouterKey
 }
 
-func (msg *MsgCreatePrefPool) Type() string {
-	return TypeMsgCreatePrefPool
+func (msg *MsgAddQuestion) Type() string {
+	return TypeMsgAddQuestion
 }
 
-func (msg *MsgCreatePrefPool) GetSigners() []sdk.AccAddress {
+func (msg *MsgAddQuestion) GetSigners() []sdk.AccAddress {
 	creator, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		panic(err)
@@ -32,12 +32,12 @@ func (msg *MsgCreatePrefPool) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{creator}
 }
 
-func (msg *MsgCreatePrefPool) GetSignBytes() []byte {
+func (msg *MsgAddQuestion) GetSignBytes() []byte {
 	bz := ModuleCdc.MustMarshalJSON(msg)
 	return sdk.MustSortJSON(bz)
 }
 
-func (msg *MsgCreatePrefPool) ValidateBasic() error {
+func (msg *MsgAddQuestion) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)

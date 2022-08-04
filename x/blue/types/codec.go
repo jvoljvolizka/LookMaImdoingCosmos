@@ -11,7 +11,8 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgCreatePool{}, "blue/CreatePool", nil)
 	cdc.RegisterConcrete(&MsgVote{}, "blue/Vote", nil)
 	cdc.RegisterConcrete(&MsgCreatePrefPool{}, "blue/CreatePrefPool", nil)
-// this line is used by starport scaffolding # 2
+	cdc.RegisterConcrete(&MsgAddQuestion{}, "blue/AddQuestion", nil)
+	// this line is used by starport scaffolding # 2
 }
 
 func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
@@ -22,9 +23,12 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgVote{},
 	)
 	registry.RegisterImplementations((*sdk.Msg)(nil),
-	&MsgCreatePrefPool{},
-)
-// this line is used by starport scaffolding # 3
+		&MsgCreatePrefPool{},
+	)
+	registry.RegisterImplementations((*sdk.Msg)(nil),
+		&MsgAddQuestion{},
+	)
+	// this line is used by starport scaffolding # 3
 
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
 }

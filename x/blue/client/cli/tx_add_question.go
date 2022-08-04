@@ -12,22 +12,22 @@ import (
 
 var _ = strconv.Itoa(0)
 
-func CmdCreatePrefPool() *cobra.Command {
+func CmdAddQuestion() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-pref-pool [title]",
-		Short: "Broadcast message createPrefPool",
+		Use:   "add-question [body]",
+		Short: "Broadcast message addQuestion",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			argTitle := args[0]
+			argBody := args[0]
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgCreatePrefPool(
+			msg := types.NewMsgAddQuestion(
 				clientCtx.GetFromAddress().String(),
-				argTitle,
+				argBody,
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
